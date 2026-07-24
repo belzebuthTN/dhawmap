@@ -941,10 +941,16 @@ function SmallAd({visible,onClose}){
 }
 
 export default function DhawmapLive() {
-  const [adPopupVisible,setAdPopupVisible] = React.useState(false);
-  const [adMiniVisible,setAdMiniVisible] = React.useState(false);
+  const forceAds = typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('show_ads') === '1';
+  const [adPopupVisible,setAdPopupVisible] = React.useState(forceAds);
+  const [adMiniVisible,setAdMiniVisible] = React.useState(forceAds);
 
   React.useEffect(()=>{
+    if(forceAds){
+      setAdPopupVisible(true);
+      setAdMiniVisible(true);
+      return;
+    }
     try{
       const popupClosed = localStorage.getItem('dhaw_ad_popup_closed');
       if(!popupClosed){
@@ -954,16 +960,17 @@ export default function DhawmapLive() {
         return ()=>clearTimeout(t);
       }
     }catch(e){}
-  },[]);
+  },[forceAds]);
 
   React.useEffect(()=>{
+    if(forceAds) return;
     try{
       const miniClosed = localStorage.getItem('dhaw_ad_mini_closed');
       if(miniClosed) return;
       const isMobile = typeof window !== 'undefined' && window.innerWidth <= 768;
       if(isMobile) setAdMiniVisible(true);
     }catch(e){}
-  },[]);
+  },[forceAds]);
 
   const handleClosePopup = ()=>{
     setAdPopupVisible(false);
