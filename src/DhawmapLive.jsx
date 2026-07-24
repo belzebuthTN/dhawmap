@@ -470,9 +470,10 @@ function App() {
     showToast(isRestored ? "Merci — signalé comme rétabli !" : "Signalement publié — merci !");
   };
 
-  const vote = async (id, field) => {
+  const vote = async (targetIds, field) => {
+    const ids = Array.isArray(targetIds) ? targetIds : [targetIds];
     const next = (reports ?? []).map((r) =>
-      r.id === id ? { ...r, [field]: (r[field] ?? 0) + 1 } : r
+      ids.includes(r.id) ? { ...r, [field]: (r[field] ?? 0) + 1 } : r
     );
     await persist(next);
   };
@@ -495,7 +496,29 @@ function App() {
     let list = [...(reports ?? [])];
     if (selected) list = list.filter((r) => r.gouvId === selected);
     if (selectedDeleg) list = list.filter((r) => r.deleg === selectedDeleg);
-    return list.sort((a, b) => b.createdAt - a.createdAt);
+
+    const grouped = [];
+    const map = new Map();
+    for (const r of list.sort((a, b) => b.createdAt - a.createdAt)) {
+      const key = `${r.gouvId || ""}|${r.deleg || ""}|${r.zone || ""}|${r.street || ""}|${(r.note || "").trim().toLowerCase()}`;
+      const existing = map.get(key);
+      if (!existing) {
+        map.set(key, {
+          ...r,
+          confirms: Number(r.confirms ?? 0),
+          restored: Number(r.restored ?? 0),
+          groupIds: [r.id],
+        });
+      } else {
+        existing.confirms += Number(r.confirms ?? 0);
+        existing.restored += Number(r.restored ?? 0);
+        existing.groupIds.push(r.id);
+        existing.createdAt = Math.max(existing.createdAt, r.createdAt);
+        if (!existing.note && r.note) existing.note = r.note;
+      }
+    }
+
+    return Array.from(map.values()).sort((a, b) => b.createdAt - a.createdAt);
   }, [reports, selected, selectedDeleg]);
 
   const loading = reports === null;
@@ -960,7 +983,7 @@ function App() {
                     )}
                     <div style={{ display: "flex", gap: 8, marginTop: 8 }}>
                       <button
-                        onClick={() => vote(r.id, "confirms")}
+                        onClick={() => vote(r.groupIds ?? [r.id], "confirms")}
                         style={{
                           flex: 1,
                           display: "flex",
@@ -979,7 +1002,7 @@ function App() {
                         <Zap size={13} /> Toujours coupé · {r.confirms}
                       </button>
                       <button
-                        onClick={() => vote(r.id, "restored")}
+                        onClick={() => vote(r.groupIds ?? [r.id], "restored")}
                         style={{
                           flex: 1,
                           display: "flex",
