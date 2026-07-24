@@ -1026,6 +1026,22 @@ function App() {
         </div>
       )}
 
+      <div style={{marginTop:20,padding:'16px 18px',border:'1px solid #2C3560',borderRadius:16,background:'rgba(22,27,52,0.75)',color:'#D9DCEB',fontSize:13,lineHeight:1.6}}>
+        <div style={{fontFamily:"'Trebuchet MS', 'Century Gothic', ui-sans-serif, sans-serif",color:'#F2C94C',fontSize:14,fontWeight:700,marginBottom:6}}>Comment ça marche</div>
+        <div style={{marginBottom:8}}>
+          • Choisis ta zone ou ta rue dans la liste, puis publie un signalement pour indiquer si l’électricité est coupée ou rétablie.
+        </div>
+        <div style={{marginBottom:8}}>
+          • Les signalements récents comptent davantage et le statut évolue en temps réel selon les votes de la communauté.
+        </div>
+        <div style={{marginBottom:8}}>
+          • Ce site est indépendant et <strong>n’est pas officiel</strong> : il n’est pas géré par le gouvernement tunisien et ne collecte aucune donnée personnelle de ses utilisateurs.
+        </div>
+        <div>
+          • Les informations sont fournies à titre collaboratif pour aider la communauté à mieux suivre la situation locale.
+        </div>
+      </div>
+
       <style>{`
         @media (min-width: 800px) {
           main > div { grid-template-columns: 1.1fr 0.9fr !important; align-items: start; }
