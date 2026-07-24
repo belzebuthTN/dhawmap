@@ -384,6 +384,44 @@ function TunisiaMap({ gouvernorats, activeCounts, maxCount, selected, onSelect, 
   );
 }
 
+const readStoredReports = async () => {
+  try {
+    if (typeof window === "undefined") return [];
+    if (window.storage?.get) {
+      const res = await window.storage.get("reports", true);
+      const value = res?.value ?? res?.data;
+      if (value) {
+        const parsed = JSON.parse(value);
+        return Array.isArray(parsed) ? parsed : [];
+      }
+    }
+    const raw = window.localStorage.getItem("dhaw_reports") || window.localStorage.getItem("reports");
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      return Array.isArray(parsed) ? parsed : [];
+    }
+  } catch (e) {
+    // ignore and fall back
+  }
+  return [];
+};
+
+const writeStoredReports = async (next) => {
+  try {
+    if (typeof window === "undefined") return true;
+    if (window.storage?.set) {
+      await window.storage.set("reports", JSON.stringify(next), true);
+    }
+    if (window.localStorage) {
+      window.localStorage.setItem("dhaw_reports", JSON.stringify(next));
+      window.localStorage.setItem("reports", JSON.stringify(next));
+    }
+    return true;
+  } catch (e) {
+    return false;
+  }
+};
+
 function App() {
   const [reports, setReports] = useState(null); // null = loading
   const [error, setError] = useState(null);
@@ -401,6 +439,8 @@ function App() {
   const [submitting, setSubmitting] = useState(false);
   const [toast, setToast] = useState(null);
   const pollRef = useRef(null);
+  const watchRef = useRef(null);
+  const locateTimerRef = useRef(null);
 
   const showToast = (msg) => {
     setToast(msg);
@@ -408,11 +448,9 @@ function App() {
   };
 
   const loadReports = useCallback(async () => {
-    // A missing key throws on first-ever run — that's expected, not an error.
     try {
-      const res = await window.storage.get("reports", true);
-      const arr = res?.value ? JSON.parse(res.value) : [];
-      setReports(Array.isArray(arr) ? arr : []);
+      const arr = await readStoredReports();
+      setReports(arr);
       setError(null);
     } catch (e) {
       setReports((prev) => prev ?? []);
@@ -422,7 +460,15 @@ function App() {
   useEffect(() => {
     loadReports();
     pollRef.current = setInterval(() => loadReports(), 20000);
-    return () => clearInterval(pollRef.current);
+    return () => {
+      clearInterval(pollRef.current);
+      if (watchRef.current !== null && typeof navigator !== "undefined" && navigator.geolocation) {
+        navigator.geolocation.clearWatch(watchRef.current);
+      }
+      if (locateTimerRef.current) {
+        clearTimeout(locateTimerRef.current);
+      }
+    };
   }, [loadReports]);
 
   const locate = () => {
@@ -432,41 +478,95 @@ function App() {
         setLocAccuracy(null);
         return;
       }
+      if (watchRef.current !== null && navigator.geolocation) {
+        navigator.geolocation.clearWatch(watchRef.current);
+      }
+      if (locateTimerRef.current) {
+        clearTimeout(locateTimerRef.current);
+      }
+
       setLocStatus("locating");
       setLocAccuracy(null);
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          try {
-            const { latitude, longitude, accuracy } = pos.coords;
-            let best = null,
-              bestD = Infinity;
-            for (const g of GOUVERNORATS) {
-              const d = haversineSq(latitude, longitude, g.lat, g.lon);
-              if (d < bestD) {
-                bestD = d;
-                best = g;
-              }
+
+      let best = null;
+      let sampleCount = 0;
+
+      const applyLocation = (latitude, longitude, accuracy) => {
+        try {
+          let bestGouv = null;
+          let bestD = Infinity;
+          for (const g of GOUVERNORATS) {
+            const d = haversineSq(latitude, longitude, g.lat, g.lon);
+            if (d < bestD) {
+              bestD = d;
+              bestGouv = g;
             }
-            const selectedGouv = best?.id ?? "tunis";
-            const suggestedZone = pickBestLocationOption(latitude, longitude, selectedGouv);
-            setUserGouv(selectedGouv);
-            setFormGouv(selectedGouv);
-            setFormDeleg(DELEGATIONS[selectedGouv]?.[0] ?? "");
-            setFormZone(suggestedZone?.label ?? "");
-            setFormStreet(suggestedZone?.streets?.[0] ?? "");
-            setLocAccuracy(accuracy ? Math.round(accuracy) : null);
-            setLocStatus("done");
-          } catch (e) {
-            setLocStatus("denied");
-            setLocAccuracy(null);
+          }
+          const selectedGouv = bestGouv?.id ?? "tunis";
+          const suggestedZone = pickBestLocationOption(latitude, longitude, selectedGouv);
+          setUserGouv(selectedGouv);
+          setFormGouv(selectedGouv);
+          setFormDeleg(DELEGATIONS[selectedGouv]?.[0] ?? "");
+          setFormZone(suggestedZone?.label ?? "");
+          setFormStreet(suggestedZone?.streets?.[0] ?? "");
+          setLocAccuracy(accuracy ? Math.round(accuracy) : null);
+        } catch (e) {
+          setLocStatus("denied");
+          setLocAccuracy(null);
+        }
+      };
+
+      const finalize = (coords) => {
+        if (!coords) {
+          setLocStatus("denied");
+          setLocAccuracy(null);
+          return;
+        }
+        applyLocation(coords.latitude, coords.longitude, coords.accuracy);
+        setLocStatus("done");
+      };
+
+      watchRef.current = navigator.geolocation.watchPosition(
+        (pos) => {
+          const { latitude, longitude, accuracy } = pos.coords;
+          sampleCount += 1;
+          if (!best || accuracy < best.accuracy) {
+            best = { latitude, longitude, accuracy };
+          }
+          if (accuracy <= 60 || sampleCount >= 4) {
+            if (watchRef.current !== null) {
+              navigator.geolocation.clearWatch(watchRef.current);
+            }
+            if (locateTimerRef.current) {
+              clearTimeout(locateTimerRef.current);
+            }
+            finalize(best);
           }
         },
         () => {
+          if (watchRef.current !== null) {
+            navigator.geolocation.clearWatch(watchRef.current);
+          }
+          if (locateTimerRef.current) {
+            clearTimeout(locateTimerRef.current);
+          }
           setLocStatus("denied");
           setLocAccuracy(null);
         },
-        { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
       );
+
+      locateTimerRef.current = setTimeout(() => {
+        if (watchRef.current !== null) {
+          navigator.geolocation.clearWatch(watchRef.current);
+        }
+        if (best) {
+          finalize(best);
+        } else {
+          setLocStatus("denied");
+          setLocAccuracy(null);
+        }
+      }, 12000);
     } catch (e) {
       setLocStatus("denied");
       setLocAccuracy(null);
@@ -475,9 +575,8 @@ function App() {
 
   const persist = async (next) => {
     setReports(next);
-    try {
-      await window.storage.set("reports", JSON.stringify(next), true);
-    } catch (e) {
+    const ok = await writeStoredReports(next);
+    if (!ok) {
       showToast("Échec de l'enregistrement — réessaie.");
     }
   };
