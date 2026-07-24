@@ -914,6 +914,24 @@ function AdPopup({visible,onClose}){
   return (
     <div className="ad-popup-backdrop" role="dialog" aria-modal="true">
       <div className="ad-popup">
+        <button
+          type="button"
+          onClick={onClose}
+          aria-label="Fermer la popup"
+          style={{
+            position: "absolute",
+            top: 10,
+            right: 10,
+            border: "none",
+            background: "transparent",
+            color: "#111",
+            fontSize: 22,
+            cursor: "pointer",
+            lineHeight: 1,
+          }}
+        >
+          ×
+        </button>
         <h3>Découvrir notre partenaire</h3>
         <p>Annonce non intrusive — merci de soutenir le projet. Cliquez pour en savoir plus.</p>
         <p style={{fontSize:12,color:'#555',marginTop:10}}>Pour publier une publicité, merci de me contacter sur <a href="https://www.facebook.com/khalil.elkamel.31/" target="_blank" rel="noopener noreferrer">Facebook</a> ou <a href="https://www.instagram.com/khalil_el_kamel" target="_blank" rel="noopener noreferrer">Instagram</a>.</p>
