@@ -190,6 +190,7 @@ function TunisiaMap({ gouvernorats, activeCounts, maxCount, selected, onSelect, 
   const gRef = useRef(null);
   const zoomRef = useRef(null);
   const [transform, setTransform] = useState(() => d3.zoomIdentity);
+  const [mapMode, setMapMode] = useState("relief");
 
   const projection = useMemo(() => {
     return d3.geoMercator().fitExtent(
@@ -257,12 +258,27 @@ function TunisiaMap({ gouvernorats, activeCounts, maxCount, selected, onSelect, 
             <stop offset="0%" stopColor={C.bgPanel2} />
             <stop offset="100%" stopColor={C.bg} />
           </radialGradient>
+          <linearGradient id="reliefGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#4ECDC4" stopOpacity="0.9" />
+            <stop offset="50%" stopColor="#F2C94C" stopOpacity="0.55" />
+            <stop offset="100%" stopColor="#161B34" stopOpacity="0.95" />
+          </linearGradient>
+          <filter id="softGlow" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="1.2" result="blur" />
+            <feMerge>
+              <feMergeNode in="blur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
         </defs>
-        <rect x="0" y="0" width={MAP_W} height={MAP_H} fill="url(#seaGlow)" />
+        <rect x="0" y="0" width={MAP_W} height={MAP_H} fill={mapMode === "satellite" ? "#0E1224" : "url(#seaGlow)"} />
+        {mapMode === "satellite" ? (
+          <rect x="0" y="0" width={MAP_W} height={MAP_H} fill="rgba(78,205,196,0.08)" />
+        ) : null}
 
         <g ref={gRef} transform={transform.toString()}>
-          <path d={countryPath} fill="url(#grid)" stroke={C.amberDim} strokeWidth={1.2 / k} />
-          <path d={countryPath} fill="none" stroke={C.amber} strokeWidth={0.6 / k} opacity="0.55" />
+          <path d={countryPath} fill={mapMode === "satellite" ? "url(#reliefGlow)" : "url(#grid)"} stroke={C.amberDim} strokeWidth={1.2 / k} filter={mapMode === "satellite" ? "url(#softGlow)" : undefined} />
+          <path d={countryPath} fill="none" stroke={C.amber} strokeWidth={0.6 / k} opacity={mapMode === "satellite" ? 0.8 : 0.55} />
 
           {points.map((g) => {
             const count = activeCounts[g.id] ?? 0;
@@ -318,6 +334,26 @@ function TunisiaMap({ gouvernorats, activeCounts, maxCount, selected, onSelect, 
           gap: 6,
         }}
       >
+        <button
+          onClick={() => setMapMode((prev) => (prev === "relief" ? "satellite" : "relief"))}
+          aria-label="Changer de vue cartographique"
+          style={{
+            width: 30,
+            height: 30,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            background: C.bgPanel2,
+            border: `1px solid ${C.line}`,
+            color: C.text,
+            borderRadius: 8,
+            cursor: "pointer",
+            fontSize: 12,
+            fontWeight: 700,
+          }}
+        >
+          {mapMode === "relief" ? "R" : "S"}
+        </button>
         {[
           { icon: <Plus size={14} />, action: () => zoomBy(1.5), label: "Zoomer" },
           { icon: <Minus size={14} />, action: () => zoomBy(1 / 1.5), label: "Dézoomer" },
