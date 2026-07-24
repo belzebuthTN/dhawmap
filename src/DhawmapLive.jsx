@@ -42,6 +42,57 @@ const MAP_H = 620;
 // The 263 délégations of Tunisia, grouped by governorate id.
 const DELEGATIONS = {"ariana":["Ariana Medina","Ettadhamen","Kalaat el Andalous","Mnihla","Raoued","Sidi Thabet","Soukra"],"benarous":["Ben Arous","Bou Mhel El Bassatine","El Mourouj","Ezzahra","Fouchana","Hammam Chôtt","Hammam Lif","La Nouvelle Medina","Megrine","Mohamedia","Mornag","Radès"],"bizerte":["Bizerte Nord","Bizerte Sud","Djoumine","El Alia","Ghar El Melh","Ghezala","Mateur","Menzel Bourguiba","Menzel Jemil","Ras Jabel","Sejenane","Tinja","Utique","Zarzouna"],"beja":["Amdoun","Béja Nord","Béja Sud","Goubellat","Medjez El Bab","Nefza","Teboursouk","Testour","Tibar"],"gabes":["El Hamma","El Metouia","Gabes Medina","Gabes Ouest","Gabes Sud","Ghannouch","Menzel El Habib","Mareth","Matmata","Nouvelle Matmata"],"gafsa":["Belkhir","El Guetar","El Ksar","Gafsa Nord","Gafsa Sud","Mdhilla","Metlaoui","Oum El Araies","Redeyef","Sidi Aïch","Sned"],"jendouba":["Aïn Draham","Balta-Bou Aouane","Bou Salem","Fernana","Ghardimaou","Jendouba Sud","Jendouba Nord","Oued Meliz","Tabarka"],"kairouan":["Alaâ","Bou Hajla","Chebika","Echrarda","Haffouz","Hajeb El Ayoun","Kairouan Nord","Kairouan Sud","Nasrallah","Oueslatia","Sbikha"],"kasserine":["El Ayoun","Ezzouhour","Fériana","Foussana","Haïdra","Hassi El Ferid","Jedelienne","Kasserine Nord","Kasserine Sud","Majel Bel Abbès","Sbeïtla","Sbiba","Thala"],"kebili":["Douz North","Douz South","Faouar","Kebili North","Kebili South","Souk El Ahed"],"kef":["Dahmani","Jérissa","El Ksour","Sers","Kalâat Khasba","Kalaat Senan","Kef Est","Kef Ouest","Nebeur","Sakiet Sidi Youssef","Tajerouine"],"mahdia":["Bou Merdès","Chebba","Chorbane","El Djem","Essouassi","Hebira","Ksour Essef","Mahdia","Melloulèche","Ouled Chamekh","Sidi Alouane"],"manouba":["Borj El Amri","Djedeida","Douar Hicher","El Battan","Manouba","Mornaguia","Oued Ellil","Tebourba"],"monastir":["Bekalta","Bembla","Beni Hassen","Jemmal","Ksar Hellal","Ksibet el-Médiouni","Moknine","Monastir","Ouerdanine","Sahline","Sayada-Lamta-Bou Hajar","Téboulba","Zéramdine"],"medenine":["Médenine Nord","Médenine Sur","Beni Khedech","Ben Guerdane","Zarzis","Djerba Houmet Souk","Djerba Midoun","Djerba Ajim","Sidi Makhloulf"],"nabeul":["Béni Khalled","Béni Khiar","Bou Argoub","Dar Châabane El Fehri","El Haouaria","El Mida","Grombalia","Hammamet","Hammam El Guezaz","Kélibia","Korba","Menzel Bouzelfa","Menzel Temime","Nabeul","Soliman","Takelsa"],"sfax":["Agareb","Bir Ali Ben Khalifa","El Amra","El Hencha","Graïba","Jebiniana","Kerkennah","Mahrès","Menzel Chaker","Sakiet Eddaïer","Sakiet Ezzit","Sfax Ouest","Sfax Sud","Sfax Ville","Skhira","Thyna"],"sidibouzid":["Bir El Hafey","Cebbala Ouled Asker","Jilma","Meknassy","Menzel Bouzaiane","Mezzouna","Ouled Haffouz","Regueb","Sidi Ali Ben Aoun","Sidi Bouzid Est","Sidi Bouzid Ouest","Souk Jedid"],"siliana":["Bargou","Bou Arada","El Aroussa","El Krib","Gaâfour","Kesra","Makthar","Rouhia","Sidi Bou Rouis","Siliana Nord","Siliana Sud"],"sousse":["Akouda","Bouficha","Enfida","Hammam Sousse","Hergla","Kalâa Kebira","Kalâa Seghira","Kondar","M'saken","Sidi Bou Ali","Sidi El Hani","Sousse Jawhara","Sousse Médina","Sousse Riadh","Sousse Sidi Abdelhamid"],"tataouine":["Bir Lahmar","Dehiba","Ghomrassen","Remada","Smâr","Tataouine Nord","Tataouine Sud"],"tozeur":["Degache","Hazoua","Nefta","Tameghza","Tozeur"],"tunis":["Bab El Bhar","Bab Souika","Carthage","Cité El Khadra","Djebel Jelloud","El Kabaria","El Menzah","El Omrane","El Omrane supérieur","El Ouardia","Ettahrir","Ezzouhour","Hraïria","La Goulette","La Marsa","Le Bardo","Le Kram","Médina","Séjoumi","Sidi El Béchir","Sidi Hassine"],"zaghouan":["Bir Mcherga","El Fahs","Nadhour","Saouaf","Zaghouan","Zriba"]};
 
+const LOCATION_OPTIONS = {
+  tunis: [
+    { label: "El Menzah", lat: 36.836, lon: 10.177, streets: ["Avenue Habib Bourguiba", "Rue de l'Indépendance", "Rue du 15 Novembre"] },
+    { label: "La Marsa", lat: 36.878, lon: 10.325, streets: ["Avenue de la Corniche", "Rue du 7 Novembre", "Avenue de la République"] },
+    { label: "Carthage", lat: 36.857, lon: 10.327, streets: ["Avenue de Carthage", "Rue du Lac", "Rue de la Kasbah"] },
+    { label: "Le Bardo", lat: 36.809, lon: 10.135, streets: ["Avenue Mohamed V", "Rue du 20 Mars", "Rue de la Liberté"] },
+    { label: "Médina", lat: 36.799, lon: 10.165, streets: ["Rue de la Kasbah", "Rue des Oudin", "Rue Al Sidi Ben Arous"] },
+  ],
+  ariana: [
+    { label: "Ariana Centre", lat: 36.862, lon: 10.195, streets: ["Avenue du 14 Janvier", "Rue de la Paix", "Rue du 2 Mars"] },
+    { label: "Soukra", lat: 36.887, lon: 10.132, streets: ["Avenue de la République", "Rue de l'Indépendance", "Rue des Jardins"] },
+  ],
+  benarous: [
+    { label: "Ben Arous", lat: 36.753, lon: 10.228, streets: ["Avenue de la République", "Rue de l'Indépendance", "Boulevard de Tunis"] },
+    { label: "Mornag", lat: 36.728, lon: 10.260, streets: ["Rue de la Paix", "Rue de la Liberté", "Avenue du 14 Janvier"] },
+  ],
+  sousse: [
+    { label: "Sousse Medina", lat: 35.825, lon: 10.637, streets: ["Rue de la Kasbah", "Avenue Hédi Chaker", "Rue de la République"] },
+    { label: "Hammam Sousse", lat: 35.857, lon: 10.596, streets: ["Avenue du 7 Novembre", "Rue de la Paix", "Boulevard de la Mer"] },
+  ],
+  sfax: [
+    { label: "Sfax Ville", lat: 34.740, lon: 10.760, streets: ["Avenue de la Liberté", "Rue de la République", "Avenue Bourguiba"] },
+    { label: "Kerkennah", lat: 34.700, lon: 11.090, streets: ["Rue du Port", "Avenue de la Mer", "Rue principale"] },
+  ],
+  nabeul: [
+    { label: "Hammamet", lat: 36.400, lon: 10.610, streets: ["Avenue de la Mer", "Rue de la Medina", "Boulevard de la Corniche"] },
+    { label: "Nabeul Centre", lat: 36.455, lon: 10.738, streets: ["Rue de la République", "Avenue Habib Bourguiba", "Rue du 15 Novembre"] },
+  ],
+  monastir: [
+    { label: "Monastir Centre", lat: 35.764, lon: 10.811, streets: ["Avenue de la République", "Rue de la Kasbah", "Boulevard de la Mer"] },
+    { label: "Ksar Hellal", lat: 35.649, lon: 10.892, streets: ["Rue du 7 Novembre", "Avenue de la Paix", "Rue principale"] },
+  ],
+  default: [
+    { label: "Centre-ville", lat: 36.8, lon: 10.18, streets: ["Rue principale", "Avenue principale", "Boulevard central"] },
+  ],
+};
+
+function pickBestLocationOption(latitude, longitude, governorateId) {
+  const options = LOCATION_OPTIONS[governorateId] ?? LOCATION_OPTIONS.default;
+  let best = options[0];
+  let bestD = Infinity;
+  for (const opt of options) {
+    const d = haversineSq(latitude, longitude, opt.lat, opt.lon);
+    if (d < bestD) {
+      bestD = d;
+      best = opt;
+    }
+  }
+  return best;
+}
+
 
 // ---------------------------------------------------------------------------
 // Palette / tokens
@@ -304,8 +355,11 @@ function App() {
   const [selectedDeleg, setSelectedDeleg] = useState(null); // délégation filter
   const [userGouv, setUserGouv] = useState(null);
   const [locStatus, setLocStatus] = useState("idle"); // idle | locating | done | denied
+  const [locAccuracy, setLocAccuracy] = useState(null);
   const [formGouv, setFormGouv] = useState("tunis");
   const [formDeleg, setFormDeleg] = useState(DELEGATIONS["tunis"][0]);
+  const [formZone, setFormZone] = useState(LOCATION_OPTIONS.tunis[0].label);
+  const [formStreet, setFormStreet] = useState(LOCATION_OPTIONS.tunis[0].streets[0]);
   const [formType, setFormType] = useState("coupure"); // "coupure" | "retabli"
   const [note, setNote] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -339,13 +393,15 @@ function App() {
     try {
       if (typeof navigator === "undefined" || !navigator.geolocation) {
         setLocStatus("denied");
+        setLocAccuracy(null);
         return;
       }
       setLocStatus("locating");
+      setLocAccuracy(null);
       navigator.geolocation.getCurrentPosition(
         (pos) => {
           try {
-            const { latitude, longitude } = pos.coords;
+            const { latitude, longitude, accuracy } = pos.coords;
             let best = null,
               bestD = Infinity;
             for (const g of GOUVERNORATS) {
@@ -355,19 +411,29 @@ function App() {
                 best = g;
               }
             }
-            setUserGouv(best?.id ?? null);
-            setFormGouv(best?.id ?? "tunis");
-            setFormDeleg(DELEGATIONS[best?.id ?? "tunis"]?.[0] ?? "");
+            const selectedGouv = best?.id ?? "tunis";
+            const suggestedZone = pickBestLocationOption(latitude, longitude, selectedGouv);
+            setUserGouv(selectedGouv);
+            setFormGouv(selectedGouv);
+            setFormDeleg(DELEGATIONS[selectedGouv]?.[0] ?? "");
+            setFormZone(suggestedZone?.label ?? "");
+            setFormStreet(suggestedZone?.streets?.[0] ?? "");
+            setLocAccuracy(accuracy ? Math.round(accuracy) : null);
             setLocStatus("done");
           } catch (e) {
             setLocStatus("denied");
+            setLocAccuracy(null);
           }
         },
-        () => setLocStatus("denied"),
-        { timeout: 8000 }
+        () => {
+          setLocStatus("denied");
+          setLocAccuracy(null);
+        },
+        { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
       );
     } catch (e) {
       setLocStatus("denied");
+      setLocAccuracy(null);
     }
   };
 
@@ -390,6 +456,8 @@ function App() {
       gouvId: formGouv,
       gouvName: gouv?.name ?? formGouv,
       deleg: formDeleg || "",
+      zone: formZone || "",
+      street: formStreet || "",
       note: note.trim().slice(0, 200),
       createdAt: Date.now(),
       confirms: isRestored ? 0 : 1,
@@ -605,6 +673,11 @@ function App() {
                   Géolocalisation indisponible dans cet aperçu (bloquée par le navigateur ou refusée) — choisis ta zone manuellement ci-dessous.
                 </span>
               )}
+              {locStatus === "done" && locAccuracy !== null && (
+                <span style={{ fontSize: 12, color: C.teal, alignSelf: "center" }}>
+                  GPS précis activé · précision ≈ ±{locAccuracy} m
+                </span>
+              )}
             </div>
 
             {/* Report form */}
@@ -625,8 +698,12 @@ function App() {
                 value={formGouv}
                 onChange={(e) => {
                   const gid = e.target.value;
+                  const nextOptions = LOCATION_OPTIONS[gid] ?? LOCATION_OPTIONS.default;
+                  const nextZone = nextOptions[0];
                   setFormGouv(gid);
                   setFormDeleg(DELEGATIONS[gid]?.[0] ?? "");
+                  setFormZone(nextZone?.label ?? "");
+                  setFormStreet(nextZone?.streets?.[0] ?? "");
                 }}
                 style={{
                   width: "100%",
@@ -644,7 +721,7 @@ function App() {
                   <option key={g.id} value={g.id}>{g.name}</option>
                 ))}
               </select>
-              <label style={{ fontSize: 12, color: C.textDim }}>Délégation / zone</label>
+              <label style={{ fontSize: 12, color: C.textDim }}>Délégation / secteur</label>
               <select
                 value={formDeleg}
                 onChange={(e) => setFormDeleg(e.target.value)}
@@ -662,6 +739,50 @@ function App() {
               >
                 {(DELEGATIONS[formGouv] ?? []).map((d) => (
                   <option key={d} value={d}>{d}</option>
+                ))}
+              </select>
+              <label style={{ fontSize: 12, color: C.textDim }}>Zone / quartier</label>
+              <select
+                value={formZone}
+                onChange={(e) => {
+                  const chosen = (LOCATION_OPTIONS[formGouv] ?? LOCATION_OPTIONS.default).find((opt) => opt.label === e.target.value);
+                  setFormZone(e.target.value);
+                  setFormStreet(chosen?.streets?.[0] ?? "");
+                }}
+                style={{
+                  width: "100%",
+                  background: C.bg,
+                  border: `1px solid ${C.line}`,
+                  color: C.text,
+                  borderRadius: 8,
+                  padding: "9px 10px",
+                  marginTop: 4,
+                  marginBottom: 10,
+                  fontSize: 14,
+                }}
+              >
+                {((LOCATION_OPTIONS[formGouv] ?? LOCATION_OPTIONS.default)).map((opt) => (
+                  <option key={opt.label} value={opt.label}>{opt.label}</option>
+                ))}
+              </select>
+              <label style={{ fontSize: 12, color: C.textDim }}>Rue / avenue</label>
+              <select
+                value={formStreet}
+                onChange={(e) => setFormStreet(e.target.value)}
+                style={{
+                  width: "100%",
+                  background: C.bg,
+                  border: `1px solid ${C.line}`,
+                  color: C.text,
+                  borderRadius: 8,
+                  padding: "9px 10px",
+                  marginTop: 4,
+                  marginBottom: 10,
+                  fontSize: 14,
+                }}
+              >
+                {(((LOCATION_OPTIONS[formGouv] ?? LOCATION_OPTIONS.default).find((opt) => opt.label === formZone) ?? LOCATION_OPTIONS[formGouv]?.[0] ?? LOCATION_OPTIONS.default[0])?.streets ?? []).map((street) => (
+                  <option key={street} value={street}>{street}</option>
                 ))}
               </select>
               <label style={{ fontSize: 12, color: C.textDim }}>Précision (quartier, depuis quand…) — optionnel</label>
@@ -829,6 +950,11 @@ function App() {
                       </div>
                       <span style={{ fontSize: 11, color: C.textDim }}>{timeAgo(r.createdAt)}</span>
                     </div>
+                    {(r.zone || r.street) && (
+                      <p style={{ fontSize: 12, color: C.textDim, margin: "6px 0 0", lineHeight: 1.4 }}>
+                        {r.zone}{r.zone && r.street ? " · " : ""}{r.street}
+                      </p>
+                    )}
                     {r.note && (
                       <p style={{ fontSize: 13, color: C.text, margin: "6px 0", lineHeight: 1.4 }}>{r.note}</p>
                     )}
