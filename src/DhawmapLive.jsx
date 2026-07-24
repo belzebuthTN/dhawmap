@@ -909,10 +909,83 @@ function App() {
   );
 }
 
+function AdPopup({visible,onClose}){
+  if(!visible) return null;
+  return (
+    <div className="ad-popup-backdrop" role="dialog" aria-modal="true">
+      <div className="ad-popup">
+        <h3>Découvrir notre partenaire</h3>
+        <p>Annonce non intrusive — merci de soutenir le projet. Cliquez pour en savoir plus.</p>
+        <p style={{fontSize:12,color:'#555',marginTop:10}}>Pour publier une publicité, merci de me contacter sur <a href="https://www.facebook.com/khalil.elkamel.31/" target="_blank" rel="noopener noreferrer">Facebook</a> ou <a href="https://www.instagram.com/khalil_el_kamel" target="_blank" rel="noopener noreferrer">Instagram</a>.</p>
+        <div className="ad-actions">
+          <button className="ad-close" onClick={onClose}>Fermer</button>
+          <a className="ad-cta" href="https://example.com" target="_blank" rel="noopener noreferrer">Voir l'offre</a>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function SmallAd({visible,onClose}){
+  if(!visible) return null;
+  return (
+    <div className="ad-mini" role="complementary" aria-label="Annonce">
+      <div style={{display:'flex',width:'100%',justifyContent:'space-between',alignItems:'center'}}>
+        <strong style={{fontSize:13}}>Sponsor</strong>
+        <button onClick={onClose} className="ad-close" aria-label="Fermer annonce">×</button>
+      </div>
+      <div style={{fontSize:13,color:'#333'}}>Offre spéciale — En savoir plus</div>
+      <a href="https://example.com" target="_blank" rel="noopener noreferrer" className="ad-cta" style={{alignSelf:'flex-end'}}>Voir</a>
+    </div>
+  );
+}
+
 export default function DhawmapLive() {
+  const [adPopupVisible,setAdPopupVisible] = React.useState(false);
+  const [adMiniVisible,setAdMiniVisible] = React.useState(false);
+
+  React.useEffect(()=>{
+    try{
+      const popupClosed = localStorage.getItem('dhaw_ad_popup_closed');
+      if(!popupClosed){
+        const t = setTimeout(()=>{
+          setAdPopupVisible(true);
+        },3000);
+        return ()=>clearTimeout(t);
+      }
+    }catch(e){}
+  },[]);
+
+  React.useEffect(()=>{
+    try{
+      const miniClosed = localStorage.getItem('dhaw_ad_mini_closed');
+      if(miniClosed) return;
+      const isMobile = typeof window !== 'undefined' && window.innerWidth <= 768;
+      if(isMobile) setAdMiniVisible(true);
+    }catch(e){}
+  },[]);
+
+  const handleClosePopup = ()=>{
+    setAdPopupVisible(false);
+    try{localStorage.setItem('dhaw_ad_popup_closed','1')}catch(e){}
+  };
+  const handleCloseMini = ()=>{
+    setAdMiniVisible(false);
+    try{localStorage.setItem('dhaw_ad_mini_closed','1')}catch(e){}
+  };
+
   return (
     <ErrorBoundary>
       <App />
+      <AdPopup visible={adPopupVisible} onClose={handleClosePopup} />
+      <SmallAd visible={adMiniVisible} onClose={handleCloseMini} />
+      <footer style={{padding:'20px 16px 28px',textAlign:'center',color:'#9AA0C0',fontSize:13,borderTop:'1px solid #2C3560',marginTop:24,background:'rgba(22,27,52,0.7)',borderRadius:'16px 16px 0 0'}}>
+        <div style={{fontFamily:"'Trebuchet MS', 'Century Gothic', ui-sans-serif, sans-serif",color:'#F2F1EA',fontSize:14}}>© 2026 Dhawmap Live — Créé par Khalil El Kamel</div>
+        <div style={{marginTop:8,display:'flex',justifyContent:'center',gap:10,flexWrap:'wrap'}}>
+          <a href="https://www.facebook.com/khalil.elkamel.31/" target="_blank" rel="noopener noreferrer" style={{color:'#F2C94C',textDecoration:'none',border:'1px solid #2C3560',padding:'6px 10px',borderRadius:'999px',background:'#1D2444'}}>Facebook</a>
+          <a href="https://www.instagram.com/khalil_el_kamel" target="_blank" rel="noopener noreferrer" style={{color:'#4ECDC4',textDecoration:'none',border:'1px solid #2C3560',padding:'6px 10px',borderRadius:'999px',background:'#1D2444'}}>Instagram</a>
+        </div>
+      </footer>
     </ErrorBoundary>
   );
 }
