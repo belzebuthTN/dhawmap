@@ -981,6 +981,22 @@ function App() {
                     {r.note && (
                       <p style={{ fontSize: 13, color: C.text, margin: "6px 0", lineHeight: 1.4 }}>{r.note}</p>
                     )}
+                    <div style={{ marginTop: 8, marginBottom: 8 }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, color: C.textDim, marginBottom: 4 }}>
+                        <span>Score de la zone</span>
+                        <span>{Math.max(0, (r.confirms ?? 0) - (r.restored ?? 0))} pts</span>
+                      </div>
+                      <div style={{ height: 8, borderRadius: 999, background: "#2C3560", overflow: "hidden" }}>
+                        <div
+                          style={{
+                            height: "100%",
+                            width: `${Math.max(8, Math.min(100, ((r.confirms ?? 0) / Math.max(1, (r.confirms ?? 0) + (r.restored ?? 0))) * 100))}%`,
+                            background: (r.confirms ?? 0) >= (r.restored ?? 0) ? C.amber : C.teal,
+                            borderRadius: 999,
+                          }}
+                        />
+                      </div>
+                    </div>
                     <div style={{ display: "flex", gap: 8, marginTop: 8 }}>
                       <button
                         onClick={() => vote(r.groupIds ?? [r.id], "confirms")}
